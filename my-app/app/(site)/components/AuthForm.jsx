@@ -4,6 +4,8 @@ import Input from "@/app/components/inputs/Input";
 import Button from "@/app/components/Button";
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
+import AuthSocialButton from "./AuthSocialButton";
+import { BsGithub, BsGoogle } from 'react-icons/bs'
 
 const AuthForm = () => {
 
@@ -15,8 +17,8 @@ const AuthForm = () => {
         if (variant == 'LOGIN') {
             setVariant('REGISTER');
         } else {
-                setVariant('LOGIN');
-            }
+            setVariant('LOGIN');
+        }
     }, [variant]);
 
     const {
@@ -35,7 +37,7 @@ const AuthForm = () => {
 
     const onSubmit = (data) => {
         setIsLoading(true);
-        
+
         if (variant == 'REGISTER') {
 
         }
@@ -52,43 +54,78 @@ const AuthForm = () => {
     return (
         <div>
             <div>
-                <form onSubmit={handleSubmit(onSubmit)}>
-                    {variant == 'REGISTER' && (
-                        <Input 
+                <form
+                    onSubmit={handleSubmit(onSubmit)}
+                >
+                    {variant === 'REGISTER' && (
+                        <Input
+                            disabled={isLoading}
+                            register={register}
+                            errors={errors}
+                            required
                             id="name"
                             label="Name"
-                            register={register}
-                            errors={errors} 
                         />
                     )}
                     <Input
-                        id="email"
-                        label="Email"
-                        type="email"
+                        disabled={isLoading}
                         register={register}
-                        errors={errors} 
+                        errors={errors}
+                        required
+                        id="email"
+                        label="Email address"
+                        type="email"
                     />
                     <Input
+                        disabled={isLoading}
+                        register={register}
+                        errors={errors}
+                        required
                         id="password"
                         label="Password"
                         type="password"
-                        register={register}
-                        errors={errors} 
                     />
                     <div>
-                        <Button
-                            disabled={isLoading}
-                            fullWidth
-                            type='submit'
-                        >
-                            {variant == 'LOGIN' ? 'Sign In' : 'Register'}
+                        <Button disabled={isLoading} fullWidth type="submit">
+                            {variant === 'LOGIN' ? 'Sign in' : 'Register'}
                         </Button>
                     </div>
                 </form>
+                <div>
+                    <div>
+                        <div>
+                            <div />
+                        </div>
+                        <div>
+                            <span>
+                                Or continue with
+                            </span>
+                        </div>
+                    </div>
+                    <div>
+                        <AuthSocialButton
+                            icon={BsGithub}
+                            onClick={() => socialAction('github')}
+                        />
+                        <AuthSocialButton
+                            icon={BsGoogle}
+                            onClick={() => socialAction('google')}
+                        />
+                    </div>
+                </div>
+                <div>
+                    <div>
+                        {variant === 'LOGIN' ? 'New to Messenger?' : 'Already have an account?'}
+                    </div>
+                    <div
+                        onClick={toggleVariant}
+                    >
+                        {variant === 'LOGIN' ? 'Create an account' : 'Login'}
+                    </div>
+                </div>
             </div>
         </div>
     )
 }
-// https://www.youtube.com/watch?v=PGPGcKBpAk8 48:02
 
 export default AuthForm;
