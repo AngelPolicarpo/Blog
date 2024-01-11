@@ -2,7 +2,7 @@
 
 import axios from "axios";
 import { signIn } from 'next-auth/react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { BsGithub, BsGoogle } from 'react-icons/bs';
 import { useForm } from 'react-hook-form';
 import { useRouter } from "next/navigation";
@@ -45,10 +45,23 @@ const AuthForm = () => {
     if (variant === 'REGISTER') {
       axios.post('/api/register', data)
         .catch(() => toast.error('Something went wrong!'))
+        .finally(() => setIsLoading(false))
     }
 
     if (variant === 'LOGIN') {
-
+      signIn('credentials', {
+        ...data,
+        redirect: false
+      })
+      .then((callback) => {
+        if (callback?.error) {
+          toast.error('Invalid credentials!')
+        }
+        if (callback?.ok && !callback?.error) {
+          toast.success('Logged in!')
+        }
+      })
+      .finally(() => setIsLoading(false))
   }
 }
 
@@ -61,8 +74,8 @@ const AuthForm = () => {
           toast.error('Invalid credentials!');
         }
 
-        if (callback?.ok) {
-          router.push('/conversations')
+        if (callback?.ok && !callback?.error) {
+          toast.success('Logged in!')
         }
       })
       .finally(() => setIsLoading(false));
